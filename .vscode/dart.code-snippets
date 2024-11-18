@@ -1,0 +1,27 @@
+{
+  "Dart File Header": {
+    "prefix": "dartfiledoc",
+    "body": [
+      "// ======================================================================",
+      "// File: ${TM_FILENAME}",
+      "// Description: ${1:Brief description of the file}",
+      "// Author: ${2:Your Name}",
+      "// Date: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "// ======================================================================",
+      ""
+    ],
+    "description": "Inserts a standardized Dart file header"
+  },
+  "Dart Class Documentation": {
+    "prefix": "dartclassdoc",
+    "body": [
+      "/// ${1:Class Description}",
+      "class ${2:ClassName} {",
+      "  ${3:constructor}",
+      "",
+      "  ${4:methods}",
+      "}"
+    ],
+    "description": "Generates a Dart class with documentation comments"
+  } 
+}
