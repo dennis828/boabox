@@ -203,11 +203,11 @@ class VndbProperties {
       }
 
       if (apiProperties == null) {
-        throw "GameNotFoundError";
+        logger.w('No properties were found returned by the API for Game "$appTitle"');
+        return null;
       }
     } catch (error, stackTrace) {
-      logger.e("Error Occured While Getting VndbProperties From The Api:",
-          error: error, stackTrace: stackTrace);
+      logger.e("Error Occured While Getting VndbProperties From The Api:", error: error, stackTrace: stackTrace);
       return null;
     }
 

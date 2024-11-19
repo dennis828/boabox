@@ -73,8 +73,10 @@ class GameProvider extends ChangeNotifier {
 
   /// Adds library directories and initializes the [GameDiscoveryService].
   ///
-  /// Notifies listeners after adding directories.
-  void setLibraryDirectories(List<String> directories) { // TODO: possibly rename to addLibraryDirectories
+  /// Notifies listeners after adding directories. When `reset` is set to `true`
+  /// the directories list is cleared before adding new ones.
+  void setLibraryDirectories(List<String> directories, {bool reset = false}) { // TODO: possibly rename to addLibraryDirectories
+    if (reset) _libraryDirectories.clear();
     _libraryDirectories.addAll(directories);
     logger.i("GameProvider added ${directories.length} to GameDiscoveryService");
     _gds = GameDiscoveryService(directories: _libraryDirectories);

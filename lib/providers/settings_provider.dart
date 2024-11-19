@@ -27,7 +27,7 @@ class SettingsProvider extends ChangeNotifier with WidgetsBindingObserver {
   static const _numberOfPages = 3;
 
   /// The current user application settings.
-  late final UserAppSettings _settings;
+  late UserAppSettings _settings;
   
   /// The index of the currently selected startup page.
   late int _selectedPageIndex;
@@ -73,7 +73,8 @@ class SettingsProvider extends ChangeNotifier with WidgetsBindingObserver {
   BannerAction get bannerAction => _settings.bannerAction;
 
   /// Gets an unmodifiable list of library directories.
-  List<String> get libraryDirectories => List.unmodifiable(_settings.libraryDirectories);
+  // List<String> get libraryDirectories => List.unmodifiable(_settings.libraryDirectories);
+  List<String> get libraryDirectories => _settings.libraryDirectories;
 
 
   ///
@@ -88,7 +89,6 @@ class SettingsProvider extends ChangeNotifier with WidgetsBindingObserver {
         ? 0
         : index; // ensure the index is always in range
     notifyListeners();
-    _saveSettingsToDb();
   }
 
   /// Sets the selected startup page as [StartPage].
@@ -117,6 +117,7 @@ class SettingsProvider extends ChangeNotifier with WidgetsBindingObserver {
   /// Replaces the existing directories with the provided list.
   set libraryDirectories(List<String> directories) {
     _settings.libraryDirectories = directories;
+    notifyListeners();
     _saveSettingsToDb();
   }
 

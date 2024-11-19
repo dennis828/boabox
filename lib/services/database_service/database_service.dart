@@ -148,10 +148,12 @@ class DatabaseService {
         settingsMap['libraryDirectories']
       ]);
       logger.i("Settings upserted successfully.");
-    } catch (error, stackTrace) {
+    }
+    catch (error, stackTrace) {
       logger.w("SQL transaction failed. Failed to upsert settings.", error: error, stackTrace: stackTrace);
       rethrow;
-    } finally {
+    }
+    finally {
       stmt.dispose();
     }
   }
@@ -183,7 +185,7 @@ class DatabaseService {
         defaultTheme: ThemeType.values[row["defaultTheme"]],
         bannerAction: BannerAction.values[row["bannerAction"]],
         enableInternetRecommendations: row["enableInternetRecommendations"] == 1 ? true : false,
-        libraryDirectories: row["libraryDirectories"].split("<*>"));
+        libraryDirectories: row["libraryDirectories"] == "" ? [] : row["libraryDirectories"].split("<*>")); // prevent empty string in list
     }
     catch (error, stackTrace) {
       logger.e("DatabaseService: Failed to fetch settings.", error: error, stackTrace: stackTrace);
@@ -422,6 +424,8 @@ class DatabaseService {
       // Dispose the database
       await close();
 
+      print("123");
+
       // Delete the database file
       final dbFile = File(await getDatabasePath());
       if (dbFile.existsSync()) {
@@ -437,7 +441,7 @@ class DatabaseService {
       }
 
       // Reset initialization state and completer
-      _initCompleter = Completer<void>(); // Reset the completer
+      _initCompleter = Completer<void>();
 
       // Re-initialize the database
       await initialize();

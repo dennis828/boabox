@@ -132,6 +132,7 @@ Future<void> showFolderDialog(BuildContext context) async {
                         if (selectedDirectory != null && !folders.contains(selectedDirectory)) {
                           setState(() {
                             folders.add(selectedDirectory);
+                            settingsProvider.libraryDirectories = folders;
                           });
                         }
                       },
@@ -437,9 +438,10 @@ class SettingsItemDeleteUserData extends StatelessWidget {
     );
 
     if (confirm != null && confirm) {
-      final settinsProvider = context.read<SettingsProvider>();
-      settinsProvider.wipeDatabase();
-      context.read<GameProvider>().setLibraryDirectories(settinsProvider.libraryDirectories); // ugly fix for now
+      final settingsProvider = context.read<SettingsProvider>();
+      final gameProvider = context.read<GameProvider>();
+      await settingsProvider.wipeDatabase();
+      gameProvider.setLibraryDirectories(settingsProvider.libraryDirectories, reset: true);
     }
   }
 
