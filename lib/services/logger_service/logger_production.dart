@@ -10,6 +10,7 @@
 
 import 'dart:io';
 import 'dart:async';
+import 'package:boabox/utils/database_path/database_path.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -35,8 +36,10 @@ class _FileOutput extends LogOutput {
   /// Once the file is ready, the [_initCompleter] is completed to signal that
   /// logging can proceed.
   void _init() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/logs.txt');
+    final date = DateTime.now();
+    final directory = await getApplicationSupportDirectory();
+    final file = File('${directory.path}/logs/${date.year}-${date.month}-${date.day}-log.txt');
+    ensureDirectoryExists(file.path);
     _sink = file.openWrite(mode: FileMode.append);
     _initCompleter.complete();
   }
@@ -48,7 +51,8 @@ class _FileOutput extends LogOutput {
   void output(OutputEvent event) async {
     await _initCompleter.future; // Ensure sink is initialized
     for (var line in event.lines) {
-      _sink?.writeln('${DateTime.now()} $line');
+      final date = DateTime.now();
+      _sink?.writeln('${date.year}-${date.month}-${date.day} ${date.hour}:${date.minute}:${date.second} $line');
     }
   }
 
@@ -73,7 +77,7 @@ class _FileOutput extends LogOutput {
 Logger getProductionLogger() {
   return Logger(
     level: Level.warning,
-    printer: SimplePrinter(),
+    printer: SimplePrinter(colors: false),
     output: MultiOutput([
       ConsoleOutput(),
       _FileOutput(),
