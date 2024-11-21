@@ -13,7 +13,6 @@ A library manager for Ren'Py games.
 - [Installation](#installation)
 - [User Guide](#user-guide)
   - [Getting Started](#getting-started)
-  - [Main Interface](#main-interface)
   - [Settings](#settings)
 - [Donation](#donation)
 - [Roadmap](#roadmap)
@@ -23,10 +22,12 @@ A library manager for Ren'Py games.
 
 ## Features
 
-<p float="left">
-  <img src="https://raw.githubusercontent.com/dennis828/boabox/refs/heads/master/resources/img/screenshot-homepage.PNG" width="500" />
-  <img src="https://raw.githubusercontent.com/dennis828/boabox/refs/heads/master/resources/img/screenshot-library.PNG" width="500" />
-</p>
+<div style="display: flex; gap: 25px;">
+  
+  <img src="https://raw.githubusercontent.com/dennis828/boabox/refs/heads/master/resources/img/screenshot-homepage.PNG" alt="Image 1" style="width: 49%;">
+  
+  <img src="https://raw.githubusercontent.com/dennis828/boabox/refs/heads/master/resources/img/screenshot-library.PNG" alt="Image 2" style="width: 49%;">
+</div>
 
 - **User-Friendly Interface:** Simple and clean design for easy navigation.
 - **Customization:** Personalize your library with your own images.
@@ -51,32 +52,23 @@ A library manager for Ren'Py games.
 
 ## User Guide
 
-### Getting Started
+> [!IMPORTANT]  
+> ### Getting Started
+> Open the `settings` page and edit the `Library Folders`. A library folder is the folder that contains your games.
+>
+> ### Settings
+> - **Themes:** Choose between Light and Dark mode.
+> - **Startup Page:** Set your default page.
+> - **Internet Recommendations:** Enable / Disable random game recommendations from vndb.org.
+> - *and more ...*
 
-- **Adding your library:** Open the `settings` page and edit the `Library Folders`. A library folder is the folder that contains your games.
-- **Create an Account:** Sign up with your email to sync tasks across devices.
-
-### Main Interface
-
-- **Dashboard:** View all your tasks and their statuses.
-- **Add Task:** Click the **+** button to create a new task.
-  - **Title:** Enter the task name.
-  - **Description:** Add details about the task.
-  - **Due Date:** Set a deadline.
-- **Edit Task:** Double-click on a task to edit.
-- **Delete Task:** Right-click on a task and select **Delete**.
-
-### Settings
-
-- **Themes:** Choose between Light and Dark mode.
-- **Notifications:** Enable or disable desktop notifications.
-- **Account Settings:** Update your email, password, and sync preferences.
+<br>
 
 ## Donation
 
 > [!NOTE]  
 > I hope you're enjoying my app! If so, I'd love to hear any feedback from you on improvements or features you'd like to see added.
-> You can provide feedback via the Issues or on [reddit @dennis-868](https://www.reddit.com/user/dennis-828/). If you'd like to support my development, please consider making a donation using the button below.
+> You can provide feedback via the Issues or on [reddit @dennis-828](https://www.reddit.com/user/dennis-828/). If you'd like to support my development, please consider making a donation using the button below.
 
 <a href="https://www.buymeacoffee.com/dennis828" target="_blank" style="margin: 40px"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
