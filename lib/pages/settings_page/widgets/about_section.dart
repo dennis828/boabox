@@ -93,12 +93,12 @@ class AboutSectionText extends StatelessWidget {
             text: " from you on improvements or features you'd like to see added. You can provide feedback ",
           ),
           TextSpan(
-            text: '@dennis-868 on reddit',
+            text: '@dennis-828 on reddit',
             style: linkStyle,
             mouseCursor: SystemMouseCursors.click,
             recognizer: TapGestureRecognizer()
             ..onTap = () {
-              openWebBrowser("https://reddit.com/u/dennis-868");
+              openWebBrowser("https://reddit.com/u/dennis-828");
             },
           ),
           const TextSpan(text: ' or through the '),
@@ -108,7 +108,7 @@ class AboutSectionText extends StatelessWidget {
             mouseCursor: SystemMouseCursors.click,
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                openWebBrowser("https://github.com/dennis-868/boabox");
+                openWebBrowser("https://github.com/dennis-828/boabox");
             },
           ),
           const TextSpan(text: ".\nIf you'd like to "),
