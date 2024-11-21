@@ -6,12 +6,14 @@
 // ======================================================================
 
 
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:boabox/providers/settings_provider.dart';
 import 'package:boabox/utils/theme/app_theme.dart';
 import 'package:boabox/utils/theme/theme_helper.dart';
+import 'package:boabox/services/snackbar_service/snackbar_service.dart';
 
 
 /// A widget that builds the application's theme based on the current settings.
@@ -71,7 +73,17 @@ class ThemeBuilder extends StatelessWidget {
         return MaterialApp(
           title: 'BoaBox',
           theme: themeData,
-          home: child,
+          scaffoldMessengerKey: SnackbarService.scaffoldMessengerKey,
+          home: Builder(
+            builder: (context) {
+              
+              // this ensures that the SnackbarService can access the
+              // correct Buildcontext
+              SnackbarService.setContext(context);
+
+              return child;
+            }
+          ),
         );
       },
       child: child, // Pass the child widget to be used as home

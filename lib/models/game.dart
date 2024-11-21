@@ -13,6 +13,8 @@ import 'dart:io';
 import 'package:boabox/models/user_game_settings.dart';
 import 'package:boabox/services/game_discovery/vndb_properties.dart';
 import 'package:boabox/services/logger_service/logger_service.dart';
+import 'package:boabox/services/snackbar_service/snackbar_service.dart';
+
 
 /// Represents a game with its associated properties and user settings.
 class Game {
@@ -161,19 +163,22 @@ class Game {
   Future<void> launch() async {
     // TODO: Integrate Snackbar Messages!
     if (appPath == null) {
-      logger.w("Platform does not support app launching!");
+      logger.w("UI | Platform does not support game launching!");
+      SnackbarService.showGameLaunchedError(0);
       return;
     }
 
     final file = File(appPath!);
 
     if (!file.existsSync()) {
-      logger.w('App does not exist with this path "$appPath".');
+      logger.w('UI | "$displayName" can not be launched in "$appPath".');
+      SnackbarService.showGameLaunchedError(1, gameTitle: displayName, path: appPath);
       return;
     }
 
     await Process.start(appPath!, [], runInShell: true);
-    logger.i('App "$appTitle" launched with path "$appPath".');
+    logger.i('UI | Game "$displayName" launched with path "$appPath".');
+    SnackbarService.showGameLaunchedSuccess(displayName);
   }
 
   @override

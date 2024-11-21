@@ -11,6 +11,7 @@
 
 
 import 'package:boabox/services/logger_service/logger_service.dart';
+import 'package:boabox/services/snackbar_service/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:boabox/models/user_app_settings.dart';
 import 'package:boabox/repositories/settings_repository_impl.dart';
@@ -134,6 +135,7 @@ class SettingsProvider extends ChangeNotifier with WidgetsBindingObserver {
       await SettingsRepositoryImpl().upsertSettings(_settings);
       logger.i('Settings saved successfully.');
     } catch (error, stackTrace) {
+      SnackbarService.showSettingSavedFailed(error.toString());
       logger.e('Failed to save settings.', error: error, stackTrace: stackTrace);
     }
   }

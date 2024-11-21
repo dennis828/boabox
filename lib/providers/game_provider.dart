@@ -16,6 +16,7 @@ import 'package:boabox/models/game.dart';
 import 'package:boabox/models/image64.dart';
 import 'package:boabox/services/game_discovery/game_discovery_service.dart';
 import 'package:boabox/services/logger_service/logger_service.dart';
+import 'package:boabox/services/snackbar_service/snackbar_service.dart';
 import 'package:boabox/repositories/game_repository_impl.dart';
 
 /// A provider that manages game data, including loading, updating, and deleting games.
@@ -244,6 +245,7 @@ class GameProvider extends ChangeNotifier {
   Future<void> loadGames() async {
     if (_games.isNotEmpty) return; // Prevent reloading
     _isLoading = true;
+    SnackbarService.showInformation("Scanning Libraries...");
     notifyListeners();
 
     final gameRepository = GameRepositoryImpl();

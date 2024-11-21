@@ -21,6 +21,7 @@ import 'package:boabox/models/game.dart';
 import 'package:boabox/models/image64.dart';
 import 'package:boabox/providers/game_provider.dart';
 import 'package:boabox/services/logger_service/logger_service.dart';
+import 'package:boabox/services/snackbar_service/snackbar_service.dart';
 
 
 /// A Flutter widget that provides an interface for managing game settings,
@@ -46,13 +47,14 @@ class GameSettingsTabState extends State<GameSettingsTab> {
     final image = await _pickImage();
 
     if (image == null) {
-      logger.t("No banner image has been selected.");
+      logger.t("UI | No banner image has been selected.");
       return;
     }
     
     final bytes = await _openCroppyDialog(imageBytes: image, aspectRatio: aspectRatio);
     if (bytes == null) {
-      logger.t("User aborted in croppy dialog.");
+      logger.t("UI | User aborted in croppy dialog.");
+      SnackbarService.showSettingSavedFailed("Image selection aborted.");
       return;
     }
 
@@ -62,9 +64,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
     if (!mounted) return;
 
     context.read<GameProvider>().updateSelectedGame(userBannerImage: bannerImage);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Cover image updated successfully.")),
-    );
+    SnackbarService.showSettingSavedSuccess(0);
   }
 
 
@@ -74,13 +74,14 @@ class GameSettingsTabState extends State<GameSettingsTab> {
     final image = await _pickImage();
 
     if (image == null) {
-      logger.t("No cover image has been selected.");
+      logger.t("UI | No banner image has been selected.");
+      SnackbarService.showSettingSavedFailed("No image has been selected.");
       return;
     }
 
     final bytes = await _openCroppyDialog(imageBytes: image, aspectRatio: aspectRatio);
     if (bytes == null) {
-      logger.t("User aborted in croppy dialog.");
+      logger.t("UI | User aborted in croppy dialog.");
       return;
     }
 
@@ -89,9 +90,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
     if (!mounted) return;
 
     context.read<GameProvider>().updateSelectedGame(userCoverImage: coverImage);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Banner image updated successfully.")),
-    );
+    SnackbarService.showSettingSavedSuccess(0);
   }
 
 
@@ -116,8 +115,8 @@ class GameSettingsTabState extends State<GameSettingsTab> {
         if (fileExtension == "jpeg" || fileExtension == "jpg") {
           final img.Image? image = img.decodeJpg(imageBytes );
           if (image == null) {
-            _showErrorSnackbar("Failed to decode JPEG image.");
-            logger.e("Failed to decode JPEG image.");
+            // _showErrorSnackbar("Failed to decode JPEG image.");
+            logger.e("UI | Failed to decode JPEG image.");
             return null;
           }
           imageBytes  = Uint8List.fromList(img.encodePng(image));
@@ -131,11 +130,11 @@ class GameSettingsTabState extends State<GameSettingsTab> {
       }
     }
     catch (e, stackTrace) {
-      _showErrorSnackbar("An error occurred while picking the image.");
+      // _showErrorSnackbar("An error occurred while picking the image.");
       logger.e("Error picking image.", error: e, stackTrace: stackTrace);
       return null;
     }
-    _showErrorSnackbar("No image selected.");
+    // _showErrorSnackbar("No image selected.");
     return null;
   }
 
@@ -163,7 +162,6 @@ class GameSettingsTabState extends State<GameSettingsTab> {
 
     }
     catch (error, stackTrace) {
-      _showErrorSnackbar("An error occurred during image cropping.");
       logger.e("Error cropping image.", error: error, stackTrace: stackTrace);
     }
     return null;
@@ -173,22 +171,14 @@ class GameSettingsTabState extends State<GameSettingsTab> {
   Future<void> _resetBannerImage() async {
     await context.read<GameProvider>().updateSelectedGame(propertiesToReset: ["userBannerImage"]);
 
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Banner image reset to default.")),
-    );
+    SnackbarService.showSettingSavedSuccess(1);
   }
 
   /// Resets the cover image to its default state.
   Future<void> _resetCoverImage() async {
     await context.read<GameProvider>().updateSelectedGame(propertiesToReset: ["userCoverImage"]);
 
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Cover image reset to default.")),
-    );
+    SnackbarService.showSettingSavedSuccess(1);
   }
 
   /// Opens a dialog to edit the game's displayed title.
@@ -219,9 +209,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
                 final title = controller.text.trim();
                 
                 if (title.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Title cannot be empty.")),
-                  );
+                  SnackbarService.showInformation("The title can not be empty");
                   return;
                 }
                 Navigator.of(context).pop(title); // Save
@@ -237,10 +225,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
       if (!mounted) return;
       await context.read<GameProvider>().updateSelectedGame(userGameTitle: newGameTitle);
       
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Game title updated successfully.")),
-      );
+      SnackbarService.showSettingSavedSuccess(1);
     }
   }
 
@@ -249,10 +234,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
   Future<void> _resetTitle() async {
     await context.read<GameProvider>().updateSelectedGame(propertiesToReset: ["userGameTitle"]);
 
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Game title reset to default.")),
-    );
+    SnackbarService.showSettingSavedSuccess(1);
   }
 
 
@@ -280,15 +262,11 @@ class GameSettingsTabState extends State<GameSettingsTab> {
         await context.read<GameProvider>().updateSelectedGame(userAppUri: uri);
 
         if(!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Game path updated successfully.")),
-        );
+        SnackbarService.showSettingSavedSuccess(1);
       }
-      else {
-        _showErrorSnackbar("No game path selected.");
-      }
-    } catch (error, stackTrace) {
-      _showErrorSnackbar("An error occurred while picking the game path.");
+    }
+    catch (error, stackTrace) {
+      SnackbarService.showSettingSavedFailed("Error while picking game path.");
       logger.e("Error picking game path.", error: error, stackTrace: stackTrace);
     }
   }
@@ -298,10 +276,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
   Future<void> _resetGamePath() async {
     await context.read<GameProvider>().updateSelectedGame(propertiesToReset: ["userAppUri"]);
 
-    if(!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Game path reset to default.")),
-    );
+    SnackbarService.showSettingSavedSuccess(1);
   }
 
 
@@ -323,7 +298,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
     final directory = Directory(direcotryPath);
 
     if (!directory.existsSync()) {
-      _showErrorSnackbar("Game directory does not exist.");
+      SnackbarService.showError("Game directory does not exist.");
       return;
     }
 
@@ -361,25 +336,15 @@ class GameSettingsTabState extends State<GameSettingsTab> {
         if (!mounted) return;
         await context.read<GameProvider>().deleteSelectedGame();
 
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Game deleted successfully.")),
-        );
+        SnackbarService.showInformation("Game deleted successfully.");
       }
       catch (error, stackTrace) {
-        _showErrorSnackbar("Failed to delete the game.");
+        SnackbarService.showError("Error deleting game: $error");
         logger.e("Error deleting game,", error: error, stackTrace: stackTrace);
       }
     }
   }
 
-
-  /// Displays an error message using a [SnackBar].
-  void _showErrorSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

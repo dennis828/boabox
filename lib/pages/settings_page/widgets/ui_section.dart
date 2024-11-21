@@ -8,6 +8,7 @@
 // Date: 2024-11-17
 // ======================================================================
 
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ import 'package:boabox/pages/widgets/labeled_divider.dart';
 import 'package:boabox/pages/widgets/scrollable_body.dart';
 import 'package:boabox/providers/game_provider.dart';
 import 'package:boabox/providers/settings_provider.dart';
+import 'package:boabox/services/snackbar_service/snackbar_service.dart';
 
 
 /// A stateless widget that displays the UI-related settings within the settings section.
@@ -152,6 +154,7 @@ Future<void> showFolderDialog(BuildContext context) async {
                 child: const Text('Save'),
                 onPressed: () {
                   settingsProvider.libraryDirectories = folders;
+                  SnackbarService.showSettingSavedSuccess(0);
                   gameProvider.setLibraryDirectories(settingsProvider.libraryDirectories);
                   Navigator.of(context).pop(); // Save & Close
                 },
@@ -194,6 +197,7 @@ class SettingsItemUiTheme extends StatelessWidget {
             ),
             onChanged: (ThemeType? value) {
               settingsProvider.updateTheme(value!);
+              SnackbarService.showSettingSavedSuccess(0);
             },
             items: const [
               DropdownMenuItem<ThemeType>(
@@ -243,6 +247,7 @@ class SettingsItemDefaultPage extends StatelessWidget {
               ),
               onChanged: (StartPage? value) {
                 settingsProvider.selectedPageIndexDefault = value!;
+                SnackbarService.showSettingSavedSuccess(0);
               },
               items: const [
                 DropdownMenuItem<StartPage>(value: StartPage.home, child: Text("Home")),
@@ -285,6 +290,7 @@ class SettingsItemInternetRecommendations extends StatelessWidget {
               ),
               onChanged: (bool? value) {
                 settingsProvider.enableInternetRecommendations = value!;
+                SnackbarService.showSettingSavedSuccess(0);
               },
               items: const [
                 DropdownMenuItem<bool>(value: true, child: Text("Enabled")),
@@ -326,6 +332,7 @@ class SettingsItemBannerAction extends StatelessWidget {
             ),
             onChanged: (BannerAction? value) {
               settingsProvider.bannerAction = value!;
+              SnackbarService.showSettingSavedSuccess(0);
             },
             items: const [
               DropdownMenuItem<BannerAction>(value: BannerAction.openLibraryPage, child: Text("Open Library Page")),
@@ -382,10 +389,10 @@ class SettingsItemResyncLibrary extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: SettingsItem(
-            title: "Resync Game",
+            title: "Rescan Library Folders",
             hoverText: "Check whether games have been added or removed from the library.",
             onPressed: () => gameProvider.resyncGames(),
-            buttonText: "Resync",
+            buttonText: "Rescan",
             buttonBackgroundColor:
                 Theme.of(context).colorScheme.tertiaryContainer,
             buttonTextColor: Theme.of(context).colorScheme.onTertiaryContainer,
@@ -441,6 +448,7 @@ class SettingsItemDeleteUserData extends StatelessWidget {
       final settingsProvider = context.read<SettingsProvider>();
       final gameProvider = context.read<GameProvider>();
       await settingsProvider.wipeDatabase();
+      SnackbarService.showInformation("User data successfully deleted.");
       gameProvider.setLibraryDirectories(settingsProvider.libraryDirectories, reset: true);
     }
   }
