@@ -209,7 +209,7 @@ class GameSettingsTabState extends State<GameSettingsTab> {
                 final title = controller.text.trim();
                 
                 if (title.isEmpty) {
-                  SnackbarService.showInformation("The title can not be empty");
+                  SnackbarService.showInformation("The title can not be empty.");
                   return;
                 }
                 Navigator.of(context).pop(title); // Save
