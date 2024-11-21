@@ -192,7 +192,7 @@ class VersionAndLicensesButtonState
           // ignore: use_build_context_synchronously <-- is checked in line 189
           context: context,
           applicationName: packageInfo.appName,
-          applicationVersion: packageInfo.version,
+          applicationVersion: "${packageInfo.version}+${packageInfo.buildNumber}",
           applicationLegalese: '© 2024 dennis828',
         );
       },
