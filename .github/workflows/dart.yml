@@ -1,0 +1,71 @@
+name: BuildAndRelease
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_and_release:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Get Last Commit Message
+      id: get_commit_message
+      shell: bash
+      run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+
+    - name: Read Version from pubspec.yaml
+      if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+      id: get_version
+      shell: bash
+      run: |
+        VERSION_LINE=$(grep '^version:' pubspec.yaml)
+        VERSION_NUMBER=${VERSION_LINE#version: }
+        VERSION_NUMBER=${VERSION_NUMBER%%+*}
+        echo "version=v$VERSION_NUMBER" >> $GITHUB_OUTPUT
+
+    - name: Tag the Commit
+      if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ steps.get_version.outputs.version }}
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git tag $VERSION $GITHUB_SHA
+        git push origin $VERSION
+
+    - name: Install Flutter
+      if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Build Flutter App for Windows
+      if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+      run: flutter build windows
+
+    - name: Package Build into ZIP
+      if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+      shell: pwsh
+      run: |
+        $zipPath = "flutter_windows_${{ steps.get_version.outputs.version }}.zip"
+        $buildPath = "$(Resolve-Path build/windows/runner/Release)"
+        Compress-Archive -Path "$buildPath\*" -DestinationPath $zipPath
+
+    - name: Create GitHub Release
+      if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ steps.get_version.outputs.version }}
+        name: ${{ steps.get_version.outputs.version }}
+        body: "Release of version ${{ steps.get_version.outputs.version }}"
+        draft: false
+        prerelease: false
+        files: flutter_windows_${{ steps.get_version.outputs.version }}.zip
