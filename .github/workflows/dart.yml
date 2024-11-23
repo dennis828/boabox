@@ -85,4 +85,4 @@ jobs:
         body: "Release of version ${{ steps.get_version.outputs.version }}"
         draft: false
         prerelease: false
-        files: flutter_windows_${{ steps.get_version.outputs.version }}.zip
+        artifacts: flutter_windows_${{ steps.get_version.outputs.version }}.zip
