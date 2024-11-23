@@ -85,4 +85,4 @@ jobs:
         body: "Release of version ${{ steps.get_version.outputs.version }}"
         draft: false
         prerelease: false
-        artifacts: flutter_windows_${{ steps.get_version.outputs.version }}.zip
+        artifacts: boabox-${{ steps.get_version.outputs.version }}-win.zip
