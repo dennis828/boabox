@@ -54,13 +54,10 @@ jobs:
       if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
       shell: pwsh
       run: |
-        # for debugging
-        dir
-
         # Define variables
         $version = "${{ steps.get_version.outputs.version }}"
         $zipName = "boabox-$version-win.zip"
-        $buildPath = "$(Resolve-Path build/windows/runner/Release)"
+        $buildPath = "$(Resolve-Path build/windows/x64/runner/Release)" 
         $tmpPath = "tmp"
 
         # Create tmp directory
