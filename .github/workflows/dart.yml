@@ -48,15 +48,32 @@ jobs:
 
     - name: Build Flutter App for Windows
       if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
-      run: flutter build windows
+      run: flutter build windows --release
 
     - name: Package Build into ZIP
       if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
       shell: pwsh
       run: |
-        $zipPath = "flutter_windows_${{ steps.get_version.outputs.version }}.zip"
+        # Define variables
+        $version = "${{ steps.get_version.outputs.version }}"
+        $zipName = "boabox-$version-win.zip"
         $buildPath = "$(Resolve-Path build/windows/runner/Release)"
-        Compress-Archive -Path "$buildPath\*" -DestinationPath $zipPath
+        $tmpPath = "tmp"
+
+        # Create tmp directory
+        New-Item -ItemType Directory -Force -Path $tmpPath
+
+        # Copy build files to tmp
+        Copy-Item -Path "$buildPath\*" -Destination $tmpPath -Recurse -Force
+
+        # Copy additional DLLs to tmp
+        Copy-Item -Path "resources/dll\*" -Destination $tmpPath -Recurse -Force
+
+        # Compress tmp directory into a ZIP archive
+        Compress-Archive -Path "$tmpPath\*" -DestinationPath $zipName
+
+        # Clean up tmp directory
+        Remove-Item -Recurse -Force -Path $tmpPath
 
     - name: Create GitHub Release
       if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
