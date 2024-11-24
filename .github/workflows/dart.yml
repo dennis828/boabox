@@ -81,7 +81,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ steps.get_version.outputs.version }}
-        name: ${{ steps.get_version.outputs.version }}
+        name: 🎉 BoaBox ${{ steps.get_version.outputs.version }} released!
         body: "Release of version ${{ steps.get_version.outputs.version }}"
         draft: false
         prerelease: false
