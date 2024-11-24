@@ -40,6 +40,7 @@ A library manager for Ren'Py games.
 > ### Windows
 > 1. Download the latest installer from the [Releases](https://github.com/dennis828/boabox/releases) page.
 > 2. Run the `BoaBox.exe`.
+> 3. *If there is a pop up "Windows protected your PC", then select "More info" -> "Run anyway"*.
 >
 > ### macOS
 >
