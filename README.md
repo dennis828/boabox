@@ -69,7 +69,7 @@ A library manager for Ren'Py games.
 
 > [!NOTE]  
 > I hope you're enjoying my app! If so, I'd love to hear any feedback from you on improvements or features you'd like to see added.
-> You can provide feedback via the Issues or on [reddit @dennis-828](https://www.reddit.com/user/dennis-828/). If you'd like to support my development, please consider making a donation using the button below.
+> You can provide feedback via the Issues or on [reddit @dennis_828](https://www.reddit.com/user/dennis_828/). If you'd like to support my development, please consider making a donation using the button below.
 
 <a href="https://www.buymeacoffee.com/dennis828" target="_blank" style="margin: 40px"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
