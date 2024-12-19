@@ -26,7 +26,7 @@ class Tag {
   /// Throws a [FormatException] if the map contains invalid data.
   factory Tag.fromMap(Map<String, dynamic> map) {
     if (map['name'] == null) {
-      throw FormatException('Missing required field "name" for Tag.');
+      throw const FormatException('Missing required field "name" for Tag.');
     }
     return Tag(
       name: map['name'] as String,
