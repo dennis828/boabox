@@ -424,8 +424,6 @@ class DatabaseService {
       // Dispose the database
       await close();
 
-      print("123");
-
       // Delete the database file
       final dbFile = File(await getDatabasePath());
       if (dbFile.existsSync()) {
