@@ -12,6 +12,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import 'package:boabox/models/tag.dart';
 import 'package:boabox/models/game.dart';
 import 'package:boabox/models/image64.dart';
 import 'package:boabox/services/game_discovery/game_discovery_service.dart';
@@ -104,7 +105,7 @@ class GameProvider extends ChangeNotifier {
       Image64? vndbCoverImage,                    // VndbProperties
       Image64? vndbBannerImage,                   // VndbProperties
       String? vndbDescription,                    // VndbProperties
-      List<Map<String, dynamic>>? vndbTags,       // VndbProperties --> replaces the original list with the new one
+      List<Tag>? vndbTags,                        // VndbProperties --> replaces the original list with the new one
       List<Map<String, String>>? vndbDevelopers,  // VndbProperties --> replaces the original list with the new one
       double? vndbRating,                         // VndbProperties
       List<String>? propertiesToReset}) async {
