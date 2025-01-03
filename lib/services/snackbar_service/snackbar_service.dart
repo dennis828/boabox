@@ -1,4 +1,5 @@
 // snackbar_service.dart
+import 'package:boabox/utils/open_webbrowser/open_webbrowser.dart';
 import 'package:flutter/material.dart';
 
 class SnackbarService {
@@ -86,6 +87,34 @@ class SnackbarService {
     );
   }
 
+  /// Used to display an error
+  static void showUpdate() {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(
+          "A newer version of the app is available! 🎉",
+          style: Theme.of(_context!).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(_context!).colorScheme.onPrimaryContainer
+          ),
+          textAlign: TextAlign.center,
+          ),
+        duration: const Duration(seconds: 5),
+        backgroundColor: Theme.of(_context!).colorScheme.primaryContainer,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+        ),
+        action: SnackBarAction(
+          label: "Download!",
+          textColor: Theme.of(_context!).colorScheme.onPrimaryFixed,
+          backgroundColor: Theme.of(_context!).colorScheme.primaryFixedDim,
+          onPressed: () => {
+            openWebBrowser("https://github.com/dennis828/boabox/releases/latest/")
+          }
+        ),
+      ),
+    );
+  }
+//
 
 
   ///
