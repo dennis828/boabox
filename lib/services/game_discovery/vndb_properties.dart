@@ -7,9 +7,10 @@
 // Date: 2024-11-07
 // ======================================================================
 
-/// TODO: SPLIT API OPERATIONS FROM MODEL DEFINITION
+// TODO: SPLIT API OPERATIONS FROM MODEL DEFINITION
 
 import 'dart:convert';
+import 'package:boabox/models/tag.dart';
 import 'package:collection/collection.dart';
 
 import 'package:boabox/models/image64.dart';
@@ -46,18 +47,9 @@ class VndbProperties {
   /// Each tag is represented as a map containing its
   ///  * ID
   ///  * Name
-  ///  * Rating.
-  /// ```
-  /// [
-  ///   {
-  ///     "id" : "g32",
-  ///     "name" : "ADV",
-  ///     "rating" : 2.4
-  ///   },
-  ///   ...
-  /// ]
-  /// ```
-  final List<Map<String, dynamic>> tags = [];
+  ///  * Rating
+  ///  * Spoiler Level.
+  final List<Tag> tags = [];
 
   /// A list of developers associated with the game.
   ///
@@ -80,10 +72,6 @@ class VndbProperties {
 
   /// The timestamp of the last update.
   late int lastUpdated;
-
-
-  // List<String> reviews = []; // TODO: implement
-
 
   /// Creates a new instance of [VndbProperties].
   ///
@@ -108,7 +96,7 @@ class VndbProperties {
     this.coverImage,                        // optional --> those properties could be empty / have a null value
     this.bannerImage,                       // optional
     this.description,                       // optional
-    List<Map<String, dynamic>>? tags,       // optional
+    List<Tag>? tags,       // optional
     List<Map<String, String>>? developers,  // optional
     this.rating                             // optional
   }) {
@@ -127,6 +115,14 @@ class VndbProperties {
 
     try {
       final data = json.decode(jsonString);
+
+      // Convert a JSON string representing a tag list into a List of Tag objects.
+      final List<Tag> tagObjects = [];
+      final tagMaps = List<Map<String, dynamic>>.from(json.decode(data["tags"]));
+      for (var tagMap in tagMaps) {
+        tagObjects.add(Tag.fromMap(tagMap));
+      }
+
       logger.t('JSON data decoded successfully.');
       return VndbProperties(
         vndbId: data["vndbId"],
@@ -135,7 +131,7 @@ class VndbProperties {
         coverImage: data["coverImage"] == null ? null : Image64.fromJsonString(data["coverImage"]),
         bannerImage: data["bannerImage"] == null ? null : Image64.fromJsonString(data["bannerImage"]),
         description: data["description"],
-        tags: List<Map<String, dynamic>>.from(json.decode(data["tags"])), // convert to list from json string and convert from List<dynamic> to List<Map<String, dynamic>>
+        tags: tagObjects, // convert to list from json string and convert from List<dynamic> to List<Map<String, dynamic>>
         developers: jsonDecode(data["developers"]).map<Map<String, String>>((developer) { // convert to list from json string and convert from List<dynamic> to List<Map<String, String>>
           return Map<String, String>.from(developer);
         }).toList(),
@@ -271,39 +267,31 @@ class VndbProperties {
           stackTrace: stackTrace); //
     } //
 
-    final List<Map<String, dynamic>> tags =
-        await _tagMapper(apiProperties["tags"]);
-    logger.t(
-        'Game "${apiProperties["title"]}" has the following tags:\n${apiProperties["tags"]}');
+    final List<Tag> tags = await _tagMapper(apiProperties["tags"]);
+    logger.t('Game "${apiProperties["title"]}" has the following tags:\n${apiProperties["tags"]}');
 
-    final double? rating =
-        apiProperties["rating"] == null ? null : apiProperties["rating"] * 0.05;
-    logger.t(
-        'Game "${apiProperties["title"]}" has the following rating: ${apiProperties["rating"]}');
+    final double? rating = apiProperties["rating"] == null ? null : apiProperties["rating"] * 0.05;
+    logger.t('Game "${apiProperties["title"]}" has the following rating: ${apiProperties["rating"]}');
 
-    final List<Map<String, String>>? developers = (apiProperties["developers"]
-            as List<dynamic>?)
-        ?.map(//
-            (item) => (item as Map<String, dynamic>).map((key, value) => MapEntry(
-                key,
-                value
-                    .toString())) //  explicit casting of List<dynamic> to List<Map<String, String>>
-            )
-        .toList(); //
-    logger.t(
-        'Game "${apiProperties["title"]}" has the following developers: ${apiProperties["developers"]}');
+    final List<Map<String, String>>? developers = (apiProperties["developers"] as List<dynamic>?)?.map(
+      (item) => (item as Map<String, dynamic>).map((key, value) => MapEntry(
+      key,
+      value.toString())) // explicit casting of List<dynamic> to List<Map<String, String>>
+    ).toList();
+
+    logger.t('Game "${apiProperties["title"]}" has the following developers: ${apiProperties["developers"]}');
 
     return VndbProperties(
-        vndbId: apiProperties["id"],
-        gameTitle: apiProperties["title"],
-        developmentStatus: apiProperties["devstatus"],
-        coverImage: coverImage,
-        bannerImage: bannerImage,
-        developers: developers ?? [],
-        description: apiProperties[
-            "description"], // add parser for formatting custon vndb formatting
-        tags: tags,
-        rating: rating);
+      vndbId: apiProperties["id"],
+      gameTitle: apiProperties["title"],
+      developmentStatus: apiProperties["devstatus"],
+      coverImage: coverImage,
+      bannerImage: bannerImage,
+      developers: developers ?? [],
+      description: apiProperties["description"], // add parser for formatting custon vndb formatting
+      tags: tags,
+      rating: rating
+    );
   }
 
   @override
@@ -331,23 +319,18 @@ class VndbProperties {
   ///
   /// Removes tags with spoilers above [spoilerThreshold] and ratings below [ratingThreshold].
   /// Logs the mapping process at trace level.
-  static Future<List<Map<String, dynamic>>> _tagMapper(
-      List<dynamic> inputTags) async {
-    const spoilerThreshold =
-        1; // threshold for removing tags with to severe spoilers
-    const ratingThreshold =
-        1.8; // threshold for removing tags if they are not matching the game
-    final List<Map<String, dynamic>> tags = [];
+  static Future<List<Tag>> _tagMapper(List<Map<String, dynamic>> inputTags) async {
+    const spoilerThreshold = 1;  // threshold for removing tags with to severe spoilers
+    const ratingThreshold = 1.8; // threshold for removing tags if they are not matching the game
+    final List<Tag> tags = [];
     for (var tag in inputTags) {
-      if (tag["spoiler"] > spoilerThreshold &&
-          tag["rating"] < ratingThreshold) {
-        // filter out tags
+      if (tag["spoiler"] > spoilerThreshold && tag["rating"] < ratingThreshold) { // filter out tags
         continue;
       }
-      tags.add({"name": tag["name"], "id": tag["id"], "rating": tag["rating"]});
+      tags.add(Tag.fromMap(tag));
     }
     return tags;
   }
 
-  // ToDo: add methods to update the property
+  // TODO: add methods to update the property
 }
