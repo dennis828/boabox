@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:boabox/models/tag.dart';
 import 'package:boabox/models/game.dart';
 import 'package:boabox/pages/widgets/scrollable_body.dart';
 import 'package:boabox/pages/widgets/border_with_gap_painter.dart';
@@ -54,7 +55,7 @@ class GameDetailsContainerContent extends StatelessWidget {
   late final String developers;
 
   /// The list of tags associated with the game.
-  late final List<Map<String, dynamic>> tags; // TODO: Create Model for tags
+  late final List<Tag> tags; // TODO: Create Model for tags
 
   /// Creates a [GameDetailsContainerContent] widget.
   ///
@@ -63,7 +64,7 @@ class GameDetailsContainerContent extends StatelessWidget {
     super.key,
     required int? status,
     required List<Map<String, String>>? developers,
-    required List<Map<String, dynamic>>? tags,
+    required List<Tag>? tags,
   }) {
     this.status = _statusIntToString(status);
     this.developers = _developerListToString(developers);
@@ -148,7 +149,7 @@ class GameDetailsContainerContent extends StatelessWidget {
                       labels: tags
                         .map(
                           (tag) => Chip(
-                            label: Text(tag["name"]),
+                            label: Text(tag.name),
                             backgroundColor: Theme.of(context)
                                 .colorScheme
                                 .tertiaryContainer,
