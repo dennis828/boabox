@@ -70,14 +70,15 @@ class Tag {
     }
 
     if (map['spoiler'] == null) {
-      throw MissingInput("spoiler");
+      // Asuming spoiler level is '0' when 'non' was found.
+      map['spoiler'] = 0;
     }
 
     return Tag(
       name: map['name'] as String,
       id: map['id'] as String,
-      rating: map['name'] as double,
-      spoiler: SpoilerLevel.values[map['spoiler'] as int]
+      rating: (map['rating'] as num).toDouble(),
+      spoiler: SpoilerLevel.values[map['spoiler']]
     );
   }
 
