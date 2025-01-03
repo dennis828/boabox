@@ -149,6 +149,11 @@ class VndbProperties {
   /// This includes all properties of the instance.
   /// Logs the serialization process.
   String toJsonString() {
+    final List<Map<String, dynamic>> tagMaps = [];
+    for (var tag in tags) {
+      tagMaps.add(tag.toMap());
+    }
+
     final data = {
       "vndbId": vndbId,
       "gameTitle": gameTitle,
@@ -156,7 +161,7 @@ class VndbProperties {
       "coverImage": coverImage?.toJsonString(),
       "bannerImage": bannerImage?.toJsonString(),
       "description": description,
-      "tags": json.encode(tags),
+      "tags": json.encode(tagMaps),
       "developers": json.encode(developers),
       "rating": rating
     };
@@ -267,7 +272,8 @@ class VndbProperties {
           stackTrace: stackTrace); //
     } //
 
-    final List<Tag> tags = await _tagMapper(apiProperties["tags"]);
+    final List<Map<String, dynamic>> rawTags = (apiProperties["tags"] as List).cast<Map<String, dynamic>>();
+    final List<Tag> tags = await _tagMapper(rawTags);
     logger.t('Game "${apiProperties["title"]}" has the following tags:\n${apiProperties["tags"]}');
 
     final double? rating = apiProperties["rating"] == null ? null : apiProperties["rating"] * 0.05;
