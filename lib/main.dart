@@ -18,7 +18,9 @@ import 'package:boabox/pages/settings_page/settings_page.dart';
 import 'package:boabox/providers/game_provider.dart';
 import 'package:boabox/providers/settings_provider.dart';
 import 'package:boabox/services/logger_service/logger_service.dart';
+import 'package:boabox/services/snackbar_service/snackbar_service.dart';
 import 'package:boabox/utils/theme/theme_builder.dart';
+import 'package:boabox/utils/check_for_update/check_for_update.dart';
 
 
 /// The entry point of the BoaBox application.
@@ -81,6 +83,8 @@ class MainPage extends StatefulWidget {
 ///
 /// Handles the current selected page index and updates it based on user interactions.
 class MainPageState extends State<MainPage> {
+  static bool updateNotificationShown = true;
+
   static const List<Widget> _pages = [
     HomePage(),
     LibraryPage(),
@@ -93,9 +97,19 @@ class MainPageState extends State<MainPage> {
     NavigationDestination(icon: Icon(Icons.settings_rounded), label: 'Settings'),
   ];
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
+    // Handle navigation.
     final settingsProvider = context.read<SettingsProvider>();
     settingsProvider.selectedPageIndex = index;
+
+    // Show update notification (once)
+    if (updateNotificationShown) {
+      final updateAvailable = await checkForUpdate();
+
+      if (updateAvailable) SnackbarService.showUpdate();
+
+      updateNotificationShown = false;
+    }
   }
 
   @override
